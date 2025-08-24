@@ -1,29 +1,20 @@
-// app/layout.tsx
-import localFont from "next/font/local"
+import './globals.css'
+import type { Metadata } from 'next'
 
-const inter = localFont({
-  src: [
-    {
-      path: "../public/fonts/Inter-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/Inter-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-})
 
-export const metadata = {
-  title: "My App",
+export const metadata: Metadata = {
+  title: 'FoodieHub - Delicious Food Delivered Fresh',
+  description: 'Order from our curated menu of gourmet dishes made with love. Fast delivery, top-rated meals, and exceptional customer service.',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body >{children}</body>
     </html>
   )
 }
