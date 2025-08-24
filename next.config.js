@@ -1,12 +1,7 @@
 const nextConfig = {
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false,
   },
-  compiler: {
-    removeConsole: false,
-  },
-  // 👇 disable font optimization
-  optimizeFonts: false,
 }
 
 module.exports = nextConfig
