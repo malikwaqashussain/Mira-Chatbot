@@ -1,9 +1,12 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+  experimental: {
+    optimizeCss: true,
   },
-  images: { unoptimized: true },
-};
+  compiler: {
+    removeConsole: false,
+  },
+  // 👇 disable font optimization
+  optimizeFonts: false,
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
