@@ -1,4 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server'
+//Fetch them from Supabase 
+//Create embeddings >>store in Supabase 0r in-memory for now + Query them with LangChain when user asks
+
+
+import { NextRequest, NextResponse } from 'next/server'import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
+import { ChatOpenAI } from "langchain/chat_models/openai";
+
+// 1. Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  const question = body.message;
+
+  // 2. Create vector store
+  const vectorStore = await SupabaseVectorStore.fromExistingIndex(
+    new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY }),
+    { client: supabase, tableName: "documents", queryName: "match_documents" }
+  );
+
+  // 3. Query DB using RAG
+  const retriever = vectorStore.asRetriever();
+  const docs = await retriever.getRelevantDocuments(question);
+
+  // 4. Generate chatbot answer
+  const model = new ChatOpenAI({ openAIApiKey: process.env.OPENAI_API_KEY });
+  const response = await model.call([
+    { role: "system", content: "You are a restaurant chatbot that answers with menu prices." },
+    { role: "user", content: `Question: ${question}\nDocs: ${JSON.stringify(docs)}` }
+  ]);
+
+  return NextResponse.json({ reply: response.content });
+}
+
 
 export async function POST(request: NextRequest) {
   try {
