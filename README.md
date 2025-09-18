@@ -1,261 +1,193 @@
-# Mira-Chatbot
+# FoodieHub - Food Ordering App with AI + RAG Chatbot
 
-# FoodieHub - Food Ordering App with AI Chatbot
-
-A modern, responsive food ordering application built with Next.js, featuring real-time order management through Supabase and an intelligent OpenAI-powered chatbot for customer support.
+A modern, responsive food ordering application built with **Next.js**, featuring real-time order management through **Supabase**, a **RAG-powered OpenAI chatbot** for customer support, and intelligent menu pricing queries using **LangChain + vector database**.
 
 ## 🚀 Features
 
 ### Core Functionality
-- **Guest Ordering System**: No authentication required - customers can order immediately
-- **Real-time Order Management**: Orders stored and managed through Supabase database
-- **AI-Powered Chatbot**: OpenAI integration for intelligent customer support
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Category Filtering**: Browse menu items by category (Burgers, Pizza, Salads, etc.)
-- **Shopping Cart**: Add/remove items with quantity management
-- **Order Confirmation**: Complete order flow with customer information collection
+
+* **Guest Ordering System**: Customers can order immediately without authentication
+* **Real-time Order Management**: Orders stored and managed through Supabase
+* **AI-Powered Chatbot with RAG**: OpenAI + LangChain integration for intelligent support
+* **Menu Pricing via RAG**: Chatbot fetches up-to-date prices from Supabase vector store
+* **Responsive Design**: Optimized for desktop, tablet, and mobile
+* **Category Filtering**: Browse menu items by category
+* **Shopping Cart**: Add/remove items with quantity management
+* **Order Confirmation & Tracking**: Customers receive tracking ID after checkout
 
 ### User Experience
-- **Modern UI/UX**: Clean, intuitive interface with smooth animations
-- **Real-time Cart Updates**: Instant feedback when adding/removing items
-- **Floating Chatbot**: Accessible AI assistant available throughout the experience
-- **Order Tracking**: Customers receive order confirmation with tracking ID
-- **Mobile-First Design**: Optimized for mobile ordering experience
+
+* **Modern UI/UX**: Clean and intuitive interface
+* **Floating Chatbot**: AI assistant always available
+* **Real-time Cart Updates**
+* **Order Tracking**: Check status with order ID
+* **Mobile-First Design**
+
+---
 
 ## 🛠 Tech Stack
 
-- **Frontend**: Next.js 13+ with TypeScript
-- **Styling**: Tailwind CSS with shadcn/ui components
-- **Database**: Supabase (PostgreSQL)
-- **AI Integration**: OpenAI GPT-3.5-turbo
-- **Icons**: Lucide React
-- **Deployment**: Static export ready
+* **Frontend**: Next.js 13+ (TypeScript)
+* **Styling**: Tailwind CSS + shadcn/ui
+* **Database**: Supabase (PostgreSQL)
+* **Vector Store**: Supabase Vector DB (LangChain integration)
+* **AI Integration**: OpenAI GPT-3.5-turbo with RAG pipeline
+* **Icons**: Lucide React
+* **Deployment**: Vercel-ready
+
+---
 
 ## 📦 Project Structure
 
 ```
 ├── app/
-│   ├── api/chat/route.ts          # OpenAI chatbot API endpoint
-│   ├── globals.css                # Global styles and CSS variables
-│   ├── layout.tsx                 # Root layout with metadata
-│   └── page.tsx                   # Main application page
+│   ├── api/chat/route.ts          # Chatbot API (OpenAI + LangChain RAG)
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
 ├── components/
-│   ├── ui/                        # shadcn/ui components
-│   ├── ChatBot.tsx                # AI chatbot component
-│   └── OrderDialog.tsx            # Order completion modal
+│   ├── ui/
+│   ├── ChatBot.tsx                # Floating chatbot component
+│   └── OrderDialog.tsx
 ├── lib/
-│   ├── supabase.ts                # Supabase client and types
-│   └── utils.ts                   # Utility functions
+│   ├── supabase.ts                # Supabase client
+│   ├── ingestMenu.ts              # Script to ingest SQL menu → vector DB
+│   └── utils.ts
 ├── supabase/
-│   └── migrations/                # Database schema migrations
+│   └── migrations/
 └── README.md
 ```
+
+---
 
 ## 🗄 Database Schema
 
 ### Orders Table
+
 ```sql
 CREATE TABLE orders (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_name text NOT NULL,
   customer_email text NOT NULL,
   customer_phone text,
-  items jsonb NOT NULL,              -- Array of ordered items
+  items jsonb NOT NULL,
   total_amount decimal(10,2) NOT NULL,
-  status text DEFAULT 'pending',     -- pending, confirmed, preparing, ready, delivered
+  status text DEFAULT 'pending',
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
 ```
 
-### Row Level Security (RLS)
-- **Public Insert**: Anyone can create orders (guest ordering)
-- **Public Read**: Anyone can read orders (for status checking)
-- **Automatic Timestamps**: Updated timestamp on modifications
+### Menu Table (SQL → Vector DB)
 
-## 🤖 AI Chatbot Features
+```sql
+CREATE TABLE menu (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  price decimal(10,2) NOT NULL,
+  currency text DEFAULT 'USD',
+  category text,
+  description text
+);
+```
 
-### OpenAI Integration
-- **Model**: GPT-3.5-turbo for cost-effective, responsive interactions
-- **Context Awareness**: Maintains conversation history for better responses
-- **Fallback Responses**: Graceful handling when OpenAI is unavailable
-- **Restaurant-Specific**: Trained to assist with menu questions and ordering
+These records are embedded using **LangChain’s OpenAI embeddings** and stored in **Supabase vector store** for chatbot queries.
 
-### Chatbot Capabilities
-- Menu recommendations and descriptions
-- Dietary restriction assistance
-- Order status inquiries
-- Delivery time estimates
-- General restaurant information
-- Friendly, conversational tone
+---
 
-### Chat Interface
-- **Floating Button**: Always accessible from bottom-right corner
-- **Smooth Animations**: Slide-up modal with professional appearance
-- **Message History**: Persistent conversation during session
-- **Typing Indicators**: Visual feedback during AI response generation
-- **Mobile Optimized**: Touch-friendly interface for mobile users
+## 🤖 AI Chatbot with RAG
+
+### How It Works
+
+* User asks: *“How much is the Chicken Biryani?”*
+* Chatbot retrieves relevant pricing from **Supabase vector DB**
+* OpenAI GPT-3.5-turbo generates a natural response:
+  *“Chicken Biryani costs \$12.99.”*
+
+### Capabilities
+
+* Menu recommendations + pricing queries
+* Dietary restriction help
+* Order status lookups
+* Delivery time estimates
+* Restaurant FAQs
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ installed
-- Supabase account and project
-- OpenAI API key (optional, has fallback responses)
+
+* Node.js 18+
+* Supabase account
+* OpenAI API key
 
 ### Installation
 
-1. **Clone and install dependencies**:
 ```bash
 npm install
 ```
 
-2. **Set up Supabase**:
-   - Click "Connect to Supabase" in the top-right corner
-   - Create a new Supabase project or connect existing one
-   - The database schema will be automatically created
+### Setup Environment
 
-3. **Configure OpenAI (Optional)**:
-   - Add your OpenAI API key to environment variables:
-   ```bash
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
-   - If not configured, the chatbot will use intelligent fallback responses
+Add `.env.local`:
 
-4. **Start development server**:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+OPENAI_API_KEY=your_openai_api_key
+```
+
+### Ingest Menu into Vector DB
+
+```bash
+ts-node lib/ingestMenu.ts
+```
+
+### Run Development Server
+
 ```bash
 npm run dev
 ```
 
-5. **Open application**:
-   Navigate to `http://localhost:3000`
+Visit: `http://localhost:3000`
 
-## 🎨 Design System
-
-### Color Palette
-- **Primary**: Orange (#F97316) - Warm, appetizing brand color
-- **Success**: Green (#22C55E) - Order confirmations and success states
-- **Neutral**: Gray scale for text and backgrounds
-- **Accent**: Amber tones for highlights and hover states
-
-### Typography
-- **Font**: Inter - Clean, modern, highly readable
-- **Hierarchy**: Clear distinction between headings, body text, and captions
-- **Line Height**: 150% for body text, 120% for headings
-
-### Components
-- **Cards**: Elevated design with subtle shadows
-- **Buttons**: Rounded corners with smooth hover transitions
-- **Badges**: Contextual labels for categories and status
-- **Modal**: Centered overlays with backdrop blur
-
-## 📱 Responsive Design
-
-### Breakpoints
-- **Mobile**: < 768px - Single column layout, touch-optimized
-- **Tablet**: 768px - 1024px - Two column grid
-- **Desktop**: > 1024px - Three column grid with sidebar
-
-### Mobile Optimizations
-- Touch-friendly button sizes (minimum 44px)
-- Optimized cart summary for mobile screens
-- Swipe-friendly card interactions
-- Mobile-first chatbot interface
+---
 
 ## 🔧 API Endpoints
 
 ### Chat API (`/api/chat`)
-**POST** request with:
+
 ```json
+POST /api/chat
 {
-  "message": "User message",
-  "conversation": [
-    {
-      "id": "1",
-      "content": "Previous message",
-      "isUser": true,
-      "timestamp": "2024-01-01T00:00:00Z"
-    }
-  ]
+  "message": "What’s the price of Margherita Pizza?"
 }
 ```
 
 **Response**:
+
 ```json
 {
-  "message": "AI assistant response"
+  "reply": "Margherita Pizza costs $9.50."
 }
 ```
 
-## 🛡 Security Features
-
-### Database Security
-- **Row Level Security (RLS)**: Enabled on all tables
-- **Public Access**: Controlled access for guest ordering
-- **Data Validation**: Server-side validation for all inputs
-- **SQL Injection Protection**: Parameterized queries through Supabase
-
-### API Security
-- **Rate Limiting**: Implemented through Vercel/hosting platform
-- **Input Sanitization**: All user inputs are sanitized
-- **Error Handling**: Graceful error responses without exposing internals
-
-## 🚀 Deployment
-
-### Build for Production
-```bash
-npm run build
-```
-
-### Static Export
-The app is configured for static export and can be deployed to:
-- Vercel (recommended)
-- Netlify
-- GitHub Pages
-- Any static hosting service
-
-### Environment Variables
-Required for production:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `OPENAI_API_KEY` (optional)
+---
 
 ## 🎯 Future Enhancements
 
-### Planned Features
-- **User Authentication**: Optional account creation for order history
-- **Payment Integration**: Stripe or PayPal integration
-- **Real-time Notifications**: Order status updates via WebSocket
-- **Admin Dashboard**: Restaurant management interface
-- **Multi-language Support**: Internationalization
-- **Advanced Analytics**: Order tracking and customer insights
-
-### Technical Improvements
-- **Caching**: Redis integration for better performance
-- **Image Optimization**: CDN integration for food images
-- **PWA Support**: Offline functionality and app-like experience
-- **Advanced AI**: Custom fine-tuned models for restaurant-specific responses
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **shadcn/ui**: Beautiful, accessible UI components
-- **Supabase**: Backend-as-a-Service platform
-- **OpenAI**: AI-powered chatbot capabilities
-- **Pexels**: High-quality food photography
-- **Lucide**: Clean, consistent icon set
+* Payment gateway (Stripe/PayPal)
+* Multi-language chatbot support
+* Admin dashboard
+* Real-time notifications (WebSocket)
+* Fine-tuned AI models for restaurant-specific FAQs
 
 ---
 
-**Built with ❤️ using Next.js, Supabase, and OpenAI**
+**Built with ❤️ using Next.js, Supabase, LangChain, and OpenAI**
+
+---
+
+Would you like me to also **add an architecture diagram (Mermaid.js)** in your README that visually shows `User → Chatbot → LangChain RAG → Supabase (SQL + Vector Store) → Response`? That would make it much easier for new devs to understand.
