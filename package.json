@@ -1,3 +1,5 @@
+npm install langchain openai @supabase/supabase-js
+npm install @supabase/vector-store
 {
   "name": "nextjs",
   "version": "0.1.0",
