@@ -8,7 +8,7 @@ A modern, responsive food ordering application built with **Next.js**, featuring
 
 * **Guest Ordering System**: Customers can order immediately without authentication
 * **Real-time Order Management**: Orders stored and managed through Supabase
-* **AI-Powered Chatbot with RAG**: OpenAI + LangChain integration for intelligent support
+* **AI-Powered Chatbot with RAG**: OpenAI integration for intelligent support
 * **Menu Pricing via RAG**: Chatbot fetches up-to-date prices from Supabase vector store
 * **Responsive Design**: Optimized for desktop, tablet, and mobile
 * **Category Filtering**: Browse menu items by category
@@ -30,7 +30,6 @@ A modern, responsive food ordering application built with **Next.js**, featuring
 * **Frontend**: Next.js 13+ (TypeScript)
 * **Styling**: Tailwind CSS + shadcn/ui
 * **Database**: Supabase (PostgreSQL)
-* **Vector Store**: Supabase Vector DB (LangChain integration)
 * **AI Integration**: OpenAI GPT-3.5-turbo with RAG pipeline
 * **Icons**: Lucide React
 * **Deployment**: Vercel-ready
@@ -41,7 +40,7 @@ A modern, responsive food ordering application built with **Next.js**, featuring
 
 ```
 ├── app/
-│   ├── api/chat/route.ts          # Chatbot API (OpenAI + LangChain RAG)
+│   ├── api/chat/route.ts          # Chatbot API (OpenAI + RAG)
 │   ├── globals.css
 │   ├── layout.tsx
 │   └── page.tsx
