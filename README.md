@@ -1,4 +1,4 @@
-# Mira-Chatbot - Food Ordering App with AI + RAG Chatbot
+# Mira-Chatbot - Food Ordering AI Assistant with Open Ai + RAG System
 
 A modern, responsive food ordering application built with **Next.js**, featuring real-time order management through **Supabase**, a **RAG-powered OpenAI chatbot** for customer support, and intelligent menu pricing queries assistant.
 
