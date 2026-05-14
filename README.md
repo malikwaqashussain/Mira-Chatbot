@@ -1,6 +1,6 @@
 # FoodieHub - Food Ordering App with AI + RAG Chatbot
 
-A modern, responsive food ordering application built with **Next.js**, featuring real-time order management through **Supabase**, a **RAG-powered OpenAI chatbot** for customer support, and intelligent menu pricing queries using **LangChain + vector database**.
+A modern, responsive food ordering application built with **Next.js**, featuring real-time order management through **Supabase**, a **RAG-powered OpenAI chatbot** for customer support, and intelligent menu pricing queries assistant.
 
 ## 🚀 Features
 
